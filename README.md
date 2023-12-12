@@ -1,8 +1,8 @@
-# thesis_template
+# Graduation_thesis
 
 ## Overview
 
-TeXで論文を書くためのサンプル
+TeXで卒論を書くためのリポジトリ
 
 ## Requirement
 
@@ -12,7 +12,7 @@ TeXで論文を書くためのサンプル
 ## Install
 
 ```sh
-$ git clone https://github.com/ynct-uchida-lab/thesis_template.git
+$ git clone https://github.com/Kyosuke1004/Graduation_thesis.git
 ```
 
 cloneしたら適当なフォルダ名に変えてわかりやすくしておきましょう
