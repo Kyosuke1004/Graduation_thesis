@@ -15,7 +15,10 @@ Webカメラに自作のライトボックスを取り付け，コーヒー豆�
 
 \subsection{画像の前処理}
 取得画像には以下の前処理を施した．
-\begin{itemize}
+\begin{enumerate}
 \item 画像の2値化
-\item 画像の
-\end{itemize}
+\item 2値化した画像をもちいてコーヒー豆の領域を抽出
+\item コーヒー豆の背景を黒でマスキング
+\item コーヒー豆の重心を求め，$80\times 80$ピクセルに切り出す
+\item コーヒー豆を縦向きに補正
+\end{enumerate}
