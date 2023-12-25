@@ -11,6 +11,7 @@
     \label{fig_camera}
   \end{center}
 \end{figure}
+
 画像の明度が変わったり影ができてしまうと誤判定の原因となってしまうため，Webカメラに自作のライトボックスを取り付けそれらを起こさないための工夫を施した．なお，本実験で使用したコーヒー豆はコロンビアスプレモとブラジルサントスNo.2の生豆である．
 
 \subsection{画像の前処理}
@@ -35,8 +36,31 @@
 本実験のネットワークの構造を図\ref{fig_nnst}に示す．
 \begin{figure}[]
   \begin{center}
-    \includegraphics[scale = 0.1]{./chapter3/nn_struct.png}
+    \includegraphics[scale = 0.06]{./chapter3/nn_struct.png}
     \caption{ネットワークの構造}
     \label{fig_nnst}
   \end{center}
 \end{figure}
+
+畳み込み，Batch Normalization，ReLUを1セットとした時それを5回繰り返すため畳み込み層は合計で10層である．また，畳み込み層2層ごとにMax Poolingを行っている．そして，畳み込み層での結果を全結合層へ渡し，全結合層の出力は良否の2パターンになっている．ここで，10層の畳み込み層を$C_i = C_1 \ldots C_{10}$とし，各層のパラメータは表.\ref{table_network_parameter}にまとめる．
+\begin{table}
+  \caption{ネットワークのパラメータ}
+  \label{table_network_parameter}
+  \centering
+  \begin{tabular}{ccc}
+    \hline
+    畳み込み層  & カーネルサイズ & 出力ch \\
+    \hline \hline
+    $C_1$，$C_2$ & $3\times 3$ & 16\\
+    $C_3$，$C_4$ & $3\times 3$ & 32\\
+    $C_5$，$C_6$ & $3\times 3$ & 64\\
+    $C_7$，$C_8$ & $3\times 3$ & 128\\
+    $C_9$，$C_10$ & $3\times 3$ & 256\\
+    \hline
+    Max Pooling & カーネルサイズ$2\times 2$ & ストライド2\\
+    全結合層 & 入力256 & 出力2\\
+    \hline
+  \end{tabular}
+\end{table}
+
+畳み込み層はPadding size1で0Paddingを行っておりMax Poolingでのみ画像サイズが変わっている．
