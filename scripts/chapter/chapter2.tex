@@ -13,49 +13,46 @@ Neural Networkとはニューロンと呼ばれる人間の脳細胞をもとに
 
 \subsection{Neural Networkの構造}
 Neural Networkはユニットと呼ばれる最小要素を持ち，それに対し複数の入力と重み，バイアスから計算結果を出力する．
-これらは図\ref{fig_NN1}のような構造をしている．
-\begin{align*}
+これらは図\ref{fig_NN1}のような構造をしている．入力$x_i$に対し重み$w_i$を乗算したものにバイアス$b$を足すことで出力$y$を得る．計算式は以下のように表される．
+\begin{align}
 y &= w_{1}x_{1} + w_{2}x_{2} + w_{3}x_{3} + b
-\end{align*}
+\end{align}
 \begin{figure}[]
   \begin{center}
-    \includegraphics[scale = 0.1]{./chapter2/nn_1.png}
+    \includegraphics[scale = 0.13]{./chapter2/nn_1.png}
     \caption{ユニットの構造}
     \label{fig_NN1}
   \end{center}
 \end{figure}
-入力$x_i$に対し重み$w$を乗算したものにバイアス$b$を足すことで出力$y$を得る．計算式は以下のように表される．
 
 ここで出力$y$を複数個にすると，図\ref{fig_NN}のような構造になる．ユニットの縦方向の集まりのことを層と呼び，Neural Networkはこの層を複数組み合わせ，入力層・中間層・出力層という層を形成し計算を行う．
 入力層$x$のユニットの個数を$i=1,2,3\ldots I$，中間層$z$のユニットの個数を$j=1,2,3\ldots J$とすると，それぞれの重みは$w_{ji}$，バイアスは$b_j$となるため一般化した計算式は以下のようになる．
 \begin{figure}[]
   \begin{center}
-    \includegraphics[scale = 0.1]{./chapter2/neural_network.png}
+    \includegraphics[scale = 0.13]{./chapter2/neural_network.png}
     \caption{Neural Networkの構造}
     \label{fig_NN}
   \end{center}
 \end{figure}
 
-\begin{align*}
-z_{1} &= w_{11}x_{1} + w_{12}x_{2} + w_{13}x_{3} + b_1\\
-z_{2} &= w_{21}x_{1} + w_{22}x_{2} + w_{23}x_{3} + b_2\\
-z_{3} &= w_{31}x_{1} + w_{32}x_{2} + w_{33}x_{3} + b_3
-\end{align*}
+\begin{align}
+z_{j} &= \sum^{I}_{i=1}w_{ji}x_{i} + b_j\\
+\end{align}
 
 構造は学習モデルによって異なるため，必ずこのような形になるわけではない．そこで，入力の個数をI個とし，各要素をベクトルと行列を用いて表し，次の層のユニットへの出力を一般化すると以下のような式となる．
-\begin{align*}
+\begin{align}
 \bm{z} = \bm{W}\bm{x} + \bm{b}
-\end{align*}
+\end{align}
 
 中間層は1層のみである必要はなく，中間層の出力を次の層への入力として扱うことで層を多数化し，入力層から出力層までに多数の隠れ層を追加する．層数$L$のネットワークが存在する時，$l+1$層のユニットの出力$\bm{z}^{(l+1)}$は$l$層のユニットの出力$\bm{z}^{(l)}$から計算されるため，
-\begin{align*}
+\begin{align}
 \bm{z}^{(l+1)} = \bm{W}^{(l+1)}\bm{z}^{(l)} + \bm{b}^{(l+1)}
-\end{align*}
+\end{align}
 という式で一般化される．したがって$l=1,2,3\ldots L-1$までの計算を順に行なっていくことで各層の出力を得ることができ，最終的な出力$\bm{y}=\bm{z}^{(L)}$を計算することができる．このような構造の層を全結合層と呼ぶことが多い．
 
 
-\subsection{学習の概要}
-前項のような計算を行うと，入力が与えられたときの出力を得ることができるとわかるが，このときの出力がNeural Networkが導いた推論になるのである．教師あり学習の場合入力に対し求められる出力が正解として与えられる．その正解と，入力からネットワークによって求められた推論を比較し，より求められる正解に推論が近づくように重みを更新していくのである．
+\subsection{学習による重みの更新}
+前項のような計算により，入力が与えられたときの出力を得ることができ，このときの出力がNeural Networkが導いた推論になる．教師あり学習の場合，入力に対し求められる出力が正解として与えられる．その正解と，入力からネットワークによって求められた推論を比較し，より求められる正解に推論が近づくように重みを更新していくのである．
 
 例えば$0 \ldots 9$までの手書き文字が入力として与えられその分類を行いたいとき，出力は$y_0 \ldots y_9$までの10個の出力を用意する．10個の出力に対し0から9までの数字を対応させ出力が1になった数字を推論として扱う．その時の構造を図\ref{fig_study}にしめす．
 \begin{figure}[]
@@ -73,11 +70,12 @@ z_{3} &= w_{31}x_{1} + w_{32}x_{2} + w_{33}x_{3} + b_3
 % ******************************************************
 \section{CNN}
 \subsection{学習の概要}
-CNNとは畳み込みと呼ばれる画像処理を組み込んだNeural Networkの1種で，画像分類など画像を用いた学習を得意としている．Neural Networkに畳み込み層を追加したものがCNNであるが，畳み込み層における画像，フィルタがNeural Networkにおける入力，重みとなっている．複数の画像と複数のフィルタが存在し，計算は一般的なNeural Networkに比べ複雑になるが，構造の概念は図\ref{fig_NN}に示すものと変わらない．
+CNNとは畳み込みと呼ばれる画像処理を組み込んだNeural Networkの1種で，画像分類など画像を用いた学習を得意としている．Neural Networkに畳み込み層を追加したものがCNNであるが，畳み込み層における画像，フィルタがNeural Networkにおける入力，重みとなっている．
 CNNでは主に畳み込みとプーリングという処理を用いて画像の特徴を抽出し学習を行っている．
 
 
-\subsection{畳み込みの計算}
+\subsection{畳み込み}
+畳み込みとは画像に対してフィルタをかけ，フィルタと類似する濃淡パターンを検出する役割を持つ．
 畳み込み層を考える上で，図\ref{fig_conv}のように$I \times J$ピクセルの画像と$2 \times 2$の要素を持つフィルタが存在すると考える．
 \begin{figure}[]
   \begin{center}
@@ -86,29 +84,68 @@ CNNでは主に畳み込みとプーリングという処理を用いて画像�
     \label{fig_conv}
   \end{center}
 \end{figure}
-ここでフィルタを$x_{11}$に重ねるように置き，各要素について乗算したものの和を出力とすると以下のように計算できる．
-\begin{align*}
-  y_{00} = x_{00}w_{00} + x_{01}w_{01} + x_{10}w_{10} + x_{11}w_{11}
-\end{align*}
+ここでフィルタを$x_{00}$に重ねるように置き，各要素について乗算したものの和を出力とすると以下のように計算できる．
+\begin{align}
+  y_{0,0} = x_{0,0}w_{0,0} + x_{0,1}w_{0,1} + x_{1,0}w_{1,0} + x_{1,1}w_{1,1}
+  \label{fig_NN1}
+\end{align}
 
 畳み込み層ではフィルターを1ピクセルずつスライドさせながら同じ計算をする．出力$y$のインデックスを$i,j$とし，フィルタのサイズを$W\times H$，とすると出力は以下の式で一般化できる．
-\begin{align*}
+\begin{align}
   y_{ij} = \sum^{W-1}_{p=0} \sum^{H-1}_{q=0} x_{i-p,j-q}w_{pq}
-\end{align*}
+\end{align}
 CNNではこの計算を繰り返していくことで画像の特徴を抽出する．
 
 このままでは入力の画像に対し出力画像が1ピクセル分小さくなってしまうため，前後で画像サイズを変更したくない場合はパディングと呼ばれる入力画像の外側に情報を追加する処理を行う．よく使用されているのは0パディングと呼ばれる画像の外側1ピクセル分を0で埋め尽くす処理である．
 
-またカラー画像を初期入力にした場合，チャンネル数はRGBの3chを持っている．フィルターは層ごとに増やしていき，フィルターの数だけ画像のch数は増えていく．これを図に表すと図\ref{fig_cnn_ch}のようになる．
+また，通常のNeural Networkと同様に入力には複数枚の画像を使用する．複数の画像に同一のフィルタを畳み込み，それを足し合わせることで出力を得る．フィルタは層ごとに増やしていき，フィルターの数だけ画像のch数は増えていく．これを図に表すと図\ref{fig_cnn_ch}のようになる．
 \begin{figure}[]
   \begin{center}
-    \includegraphics[scale = 0.08]{./chapter2/cnn_ch.png}
+    \includegraphics[scale = 0.05]{./chapter2/cnn_ch.png}
     \caption{畳み込み層でのchの増加}
     \label{fig_cnn_ch}
   \end{center}
 \end{figure}
 
-\subsection{プーリング層での計算}
+\subsection{プーリング}
+プーリングとは畳み込みで取得した画像の特徴を増幅させるような処理である．畳み込みを行った画像に対し，あらかじめ指定したサイズで画像を分割しその分割ごとに情報を要約することと，解像度を落としダウンサンプリングさせるような2つの効果を持つ．この2つの処理によって入力信号の平滑化とダウンサンプリングによるエイリアシングの防止をになっている．
 
+プーリングにはいくつかの種類が存在する．その中でも最も一般的な手法が図\ref{fig_pooling}に示すような最大値プーリングである．これは入力画像を指定したパディングサイズごとに分割して，その分割内の最大値を出力とする手法である．
+\begin{figure}[]
+  \begin{center}
+    \includegraphics[scale = 0.13]{./chapter2/pooling.png}
+    \caption{最大値プーリング}
+    \label{fig_pooling}
+  \end{center}
+\end{figure}
+
+
+% ******************************************************
+% BinaryConnect
+% ******************************************************
 \section{BinaryConnect}
+\subsection{BinaryConnectによる計算リソースの削減}
+BinaryConnectとはNeuralNetworkにおける重みを1と-1に2値化する手法である．浮動小数の重みを$\bm{w}$，2値化した重みを$\bm{w}_b$とすると，$\bm{w}_b$は以下のように計算される．
+\begin{displaymath}
+  \bm{w_{b}} = \left\{ \begin{array}{l}
+  \displaystyle 
+  +1\:  \text{if}\:  \bm{w} > 0 \\
+  -1\:\text{otherwise}
+  \end{array} \right.
+\end{displaymath}
 
+通常のNeural Networkの重みは32bitまたは16bitの浮動小数点で表されるが，BinaryConnectでは1,-1ネットワーク内で0,1に対応させ，1bitで表すことができる．これにより重みのメモリ使用量は32分の1まで抑えることが可能である．
+
+また，前章より図\ref{fig_conv}での畳み込み層での計算は式\ref{fig_NN1}で計算されるが，重みを全て1,-1にすることによって以下の式のように入力と重みの乗算を加減算のみで表すことができるようになる．
+\begin{align}
+  y_{0,0} = x_{0,0} \pm x_{0,1} \pm x_{1,0} \pm x_{1,1}
+\end{align}
+
+学習における勾配の蓄積や重みの更新は一般的なCNN通り，浮動小数の重みに対して処理し，推論時に使用する重みのみ2値化の処理をする．Fig\ref{fig_binarize} に処理の流れを示す．
+\begin{figure}[]
+  \begin{center}
+    \includegraphics[scale = 0.25]{./chapter2/binarize.png}
+    \caption{BinaryConnectにおけるパラメータ更新の流れ}
+    \label{fig_binarize}
+  \end{center}
+\end{figure}
