@@ -4,19 +4,20 @@
 \section{データセットの作成}
 \subsection{撮影環境}
 データセットを作成するためにFig.\ref{fig_camera}の環境を構築した.
-\begin{figure}[]
+\begin{figure}[htbp]
   \begin{center}
     \includegraphics[scale = 0.5]{./chapter3/device.png}
     \caption{撮影環境}
     \label{fig_camera}
   \end{center}
 \end{figure}
+
 画像ごとに明度が変わったり影ができてしまうと誤判定の原因となってしまうため，Webカメラに自作のライトボックスを取り付けた．なお，本実験で使用したコーヒー豆はコロンビアスプレモとブラジルサントスNo.2の生豆である．
 
 ここにコーヒー豆の画像画像
 
 \subsection{画像の前処理}
-取得画像には以下の前処理を施した．
+取得画像には以下の前処理を施し，画像ごとの写り方をできるだけ統一した．
 \begin{enumerate}
 \item ノイズ対策としてメディアンフィルタを用いたぼかし処理．
 \item 画像をグレースケール化し2値化をする．これによりコーヒー豆部分が黒く，背景が白い画像を生成する．
@@ -35,7 +36,7 @@
 
 \section{実験条件}
 本実験のネットワークの構造を図\ref{fig_nnst}に示す．
-\begin{figure}[]
+\begin{figure}[htbp]
   \begin{center}
     \includegraphics[scale = 0.08]{./chapter3/nn_struct.png}
     \caption{ネットワークの構造}
@@ -73,4 +74,11 @@
 \end{itemize}
 を切り替えながらオンラインでデータの拡張を行った．誤差関数にはクロスエントロピー誤差を，学習率の設定にはAdamを用いている．
 
-ネットワークの基本的な構造はこのままに，BinaryConnectのネットワークは重みのみ2値化したもの，重みとバイアスを2値化したもの，バイアスを消去したものを作成し，4種類のネットワークについて検証した．
+ネットワークや学習時のパラメータはこのままに，以下の4つのネットワークを作成した．
+\begin{itemize}
+  \item ネットワーク1：CNN
+  \item ネットワーク2：BinaryConnect
+  \item ネットワーク3：BinaryConnect + Binarize Bias
+  \item ネットワーク4：BinaryConnect + None Bias
+\end{itemize}
+これら4種類のネットワークについて正答率や誤差の変化，学習の傾向などを検証しCNNの代替となるかを考察した．
