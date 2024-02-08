@@ -50,7 +50,7 @@
 \end{figure}
 
 ネットワークの構造はVGG16\cite{simonyan2015deep}を参考に作成した．畳み込み，Batch Normalization，ReLUを1セットとして5回繰り返し合計で10層の畳み込み層とした．10層の畳み込み層を$C_1, C_2,  \ldots , C_{10}$として，各層のパラメータを表\ref{table_network_parameter}にまとめる．
-\begin{table}
+\begin{table}[htbp]
   \caption{ネットワークのパラメータ}
   \label{table_network_parameter}
   \centering
@@ -130,7 +130,7 @@ CNNとBinaryConnectの2つのネットワークについて判定精度と誤差
 
 \section{BinaryConnectの重みの推移}
 BinaryConnectの正答率はEpochごとのばらつきが大きくなっている．これは0付近で揺れている重みを強制的に2値化するためフィルタが大きく変化することによるものではないかと考えた．図\ref{fig_acc_bc}の実験結果で，378Epoch目の正答率は約84.92\%，379Epoch目の正答率は83.77\%，380Epoch目の正答率は74.14\%である．378Epochと379Epochでは正答率がほぼ同じだが，379Epochと380Epochでは約10ポイント低下している．そこで各Epochにおける層ごとの-1の個数の変化率を検証した．その結果を表\ref{table_parameter_transition}にまとめる．
-\begin{table}
+\begin{table}[htbp]
   \caption{Epochごとの重みの変化率}
   \label{table_parameter_transition}
   \centering
