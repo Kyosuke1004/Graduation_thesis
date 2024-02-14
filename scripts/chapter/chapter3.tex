@@ -4,15 +4,15 @@
 \section{データセットの作成}
 \subsection{撮影環境}
 データセットを作成するためにFig.\ref{fig_camera}の環境を構築した.
+
+画像ごとに明度が変わったり影ができてしまうと誤判定の原因となってしまうため，Webカメラに自作のライトボックスを取り付けた．なお，本実験で使用したコーヒー豆はコロンビアスプレモとブラジルサントスNo.2の生豆である．図\ref{fig_beans}に実験環境で撮影した画像を示す．
 \begin{figure}[htbp]
   \begin{center}
-    \includegraphics[scale = 0.5]{./chapter3/device.png}
+    \includegraphics[scale = 0.6]{./chapter3/device.png}
     \caption{撮影環境}
     \label{fig_camera}
   \end{center}
 \end{figure}
-
-画像ごとに明度が変わったり影ができてしまうと誤判定の原因となってしまうため，Webカメラに自作のライトボックスを取り付けた．なお，本実験で使用したコーヒー豆はコロンビアスプレモとブラジルサントスNo.2の生豆である．図\ref{fig_beans}に実験環境で撮影した画像を示す．
 \begin{figure}[htbp]
   \begin{center}
     \includegraphics[scale = 0.35]{./chapter3/beans.png}
@@ -31,6 +31,7 @@
   \item コーヒー豆の重心を求め，$100\times 100$ピクセルに切り出す
   \item コーヒー豆を縦向きに補正
   \item 画像を$80\times 80$にリサイズし，コントラストを上げる．
+  \item 値を-1から1に変換
 \end{enumerate}
 
 データセットの構成は以下の通りである．
@@ -41,16 +42,15 @@
 
 \section{実験条件}
 本実験のネットワークの構造を図\ref{fig_nnst}に示す．
-\begin{figure}[htbp]
+\begin{figure}[!b]
   \begin{center}
     \includegraphics[scale = 0.08]{./chapter3/nn_struct.png}
     \caption{ネットワークの構造}
     \label{fig_nnst}
   \end{center}
 \end{figure}
-
 ネットワークの構造はVGG16\cite{simonyan2015deep}を参考に作成した．畳み込み，Batch Normalization，ReLUを1セットとして5回繰り返し合計で10層の畳み込み層とした．10層の畳み込み層を$C_1, C_2,  \ldots , C_{10}$として，各層のパラメータを表\ref{table_network_parameter}にまとめる．
-\begin{table}[htbp]
+\begin{table}[!t]
   \caption{ネットワークのパラメータ}
   \label{table_network_parameter}
   \centering
@@ -69,7 +69,8 @@
     \hline
   \end{tabular}
 \end{table}
-畳み込み層ではカーネルサイズはすべて$3\times 3$とし，出力のチャンネル数は畳み込み2層ごとに2倍している．1ピクセル分ゼロパディングを行っているため，畳み込み層では画像サイズを落としていない．Pooling層ではカーネルサイズ$2\times 2$，ストライド2のMax Poolingを行っており画像サイズを半分に落としている．そして，畳み込み層での結果にGrobal Avarage Poolingを行ったものを全結合層へ入力し，全結合層の出力は良否の2パターンになっている．
+畳み込み層ではカーネルサイズはすべて$3\times 3$とし，出力のチャンネル数は畳み込み2層ごとに2倍している．1ピクセル分ゼロパディングを行っているため，畳み込み層では画像サイズを落としていない．Pooling層ではカーネルサイズ$2\times 2$，ストライド2のMax Poolingを行っており画像サイズを半分に落
+としている．そして，畳み込み層での結果にGrobal Avarage Poolingを行ったものを全結合層へ入力し，全結合層の出力は良否の2パターンになっている．
 学習時はミニバッチ数32，エポック数400で学習を行っている．エポックごとに入力画像に対し
 \begin{itemize}
   \item 水平方向の反転と回転
@@ -79,9 +80,8 @@
 \end{itemize}
 を切り替えながらオンラインでデータの拡張を行った．誤差関数にはクロスエントロピー誤差を，最適化にはAdamを用いている．
 
-BinaryConnectの検証時，ネットワークや学習時のパラメータはこのままに，以下の4つのネットワークを作成した．
+BinaryConnectの検証は，ネットワークや学習時のパラメータはCNNと同じにし，以下の3つのネットワークを作成した．
 \begin{itemize}
-  \item CNN
   \item BinaryConnect
   \item BinaryConnect + Binarize Bias：バイアスも2値化したネットワーク
   \item BinaryConnect + None Bias：バイアスを消去したネットワーク
@@ -91,8 +91,7 @@ BinaryConnectの検証時，ネットワークや学習時のパラメータは�
 \section{CNNとBinaryConnectの比較結果}
 \subsection{判定精度の比較結果}
 CNNとBinaryConnectの2つのネットワークについて判定精度と誤差のグラフを図\ref{fig_acc_loss_1}に示す.
-これらの結果より，正答率やその推移はどちらのネットワークも同様の傾向を示していることが分かる．CNNの誤差は250Epoch近傍から上昇傾向にあるが，BinaryConnectでは200Epoch近傍まで減少傾向にあり，その後は維持をしている．このことから，CNNでは250Epoch以降過学習状態にあるが，BinaryConnectを用いることによって過学習を抑え学習できるようなモデルになっていると考えられる．
-\begin{figure}[htbp]
+\begin{figure}[!b]
   \begin{minipage}[b]{0.5\linewidth}
     \centering
     \includegraphics[keepaspectratio, scale=0.4]{./chapter4/acc_cnn.png}
@@ -117,19 +116,18 @@ CNNとBinaryConnectの2つのネットワークについて判定精度と誤差
   \caption{CNNとBinaryConnectによる学習結果}
   \label{fig_acc_loss_1}
 \end{figure}
+これらの結果より，正答率やその推移はどちらのネットワークも同様の傾向を示していることが分かる．CNNの誤差は250Epoch近傍から上昇傾向にあるが，BinaryConnectでは200Epoch近傍まで減少傾向にあり，その後は維持をしている．このことから，CNNでは250Epoch以降過学習状態にあるが，BinaryConnectを用いることによって過学習を抑え学習できるようなモデルになっていると考えられる．
 
 また，CNNに比べBinaryConncetでは判定精度にばらつきがありLossの値も大きくなっていることが分かる．各ネットワークの最終10Epochの平均正答率をまとめると以下のようになった．
 \begin{itemize}
   \item CNN：83.57\%
   \item BinaryConnect：82.53\%
-  % \item BinaryConnect(Binarize Bias)：82.30\%
-  % \item BinaryConnect(No Bias)：82.50\%
 \end{itemize}
 
 この結果から分かる通り，BinaryConnectでは正答率にばらつきがあるが，正答率に大きな差はない．今回のネットワークの構造において，1178288個の重みがあり，32bitの浮動小数で表されるCNNでは重みだけで約4.7MBのメモリを消費する．しかしBinaryConnectを使用することで重みは約117KBまで削減することができる．ここまでの情報量を削減して同等の正答率を確保できることは，BinaryConnectが計算リソースの削減に有効であるといえる．
 
 \section{BinaryConnectの重みの推移}
-BinaryConnectの正答率はEpochごとのばらつきが大きくなっている．これは0付近で揺れている重みを強制的に2値化するためフィルタが大きく変化することによるものではないかと考えた．図\ref{fig_acc_bc}の実験結果で，378Epoch目の正答率は約84.92\%，379Epoch目の正答率は83.77\%，380Epoch目の正答率は74.14\%である．378Epochと379Epochでは正答率がほぼ同じだが，379Epochと380Epochでは約10ポイント低下している．そこで各Epochにおける層ごとの-1の個数の変化率を検証した．その結果を表\ref{table_parameter_transition}にまとめる．
+BinaryConnectの正答率はEpochごとのばらつきが大きくなっている．これは0付近で揺れている重みを強制的に2値化するためフィルタが大きく変化することによるものではないかと考えた．図\ref{fig_acc_bc}の実験結果で，378Epoch目の正答率は約84.92\%，379Epoch目の正答率は83.77\%，380Epoch目の正答率は74.14\%である．378Epochと379Epochでは正答率がほぼ同じだが，379Epochと380Epochでは約10ポイント低下している．そこで各Epochにおける層ごとの重みのうち-1の個数の変化率を検証した．その結果を表\ref{table_parameter_transition}にまとめる．
 \begin{table}[htbp]
   \caption{Epochごとの重みの変化率}
   \label{table_parameter_transition}
@@ -151,9 +149,10 @@ BinaryConnectの正答率はEpochごとのばらつきが大きくなってい�
     全結合層 & 0 & 1.090\\
     \hline
   \end{tabular}
+  \label{table_omomisuii}
 \end{table}
 
-この結果をみると正答率が変わらないときに比べ，減少する時は入力層，出力層においての-1の変化率が大きくなっていることが分かる．隠れ層では両者に大きな差はないことから，重みの正答率への影響は入口や出口で顕著に現れると考えられる．重みのばらつきを抑え正答率を上げるためにはネットワークの入出力付近の重みや勾配をクリッピングしたり，-1と1の他に0を重みに追加した3値化\cite{li2022ternary}を行うなどの対策が考えられる．
+表\ref{table_omomisuii}より，正答率が変わらないときに比べ，減少する時は入力層，出力層においての重みの変化率が大きくなっていることが分かる．隠れ層では両者に大きな差はないことから，重みの正答率への影響は入口や出口で顕著に現れると考えられる．重みのばらつきを抑え正答率を上げるためにはネットワークの入出力付近の重みや勾配をクリッピングしたり，-1と1の他に0を重みに追加した3値化\cite{li2022ternary}を行うなどの対策が考えられる．
 
 \subsection{混同行列および不正解画像}
 CNNとBinaryConnectにおいて，推論の傾向を混同行列として表\ref{table_conf}に示す．数字は左側がCNN，右側がBinaryConnectの結果である．
@@ -191,7 +190,7 @@ CNNとBinaryConnectにおいて，推論の傾向を混同行列として表\ref
 
 \section{バイアスによる判定精度の違い}
 計算リソースの削減として，普通32ビットの浮動小数で表されるバイアスを2値化もしくは消去した際の判定精度を通常のBinaryConnectと比較する．BinaryConnectのバイアスを2値化した時と消去した時の正答率と誤差を図\ref{fig_acc_loss_2}に示す．
-\begin{figure}[htbp]
+\begin{figure}[!b]
   \begin{minipage}[b]{0.5\linewidth}
     \centering
     \includegraphics[keepaspectratio, scale=0.4]{./chapter4/acc_bwb.png}
